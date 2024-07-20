@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Event Planning</title>
+</head>
+<body>
+  <h1>Event Planning</h1>
+  <form id="event-form">
+    <input type="text" id="event-name" placeholder="Event Name" required />
+    <button type="submit">Create Event</button>
+  </form>
+  <h2>Events</h2>
+  <ul id="events-list"></ul>
+  <script>
+    const form = document.getElementById('event-form');
+    const eventNameInput = document.getElementById('event-name');
+    const eventsList = document.getElementById('events-list');
+
+    const ws = new WebSocket('ws://localhost:8080');
+
+    ws.onmessage = (message) => {
+      const event = JSON.parse(message.data);
+      const listItem = document.createElement('li');
+      listItem.textContent = event.name;
+      eventsList.appendChild(listItem);
+    };
+
+    form.onsubmit = async (e) => {
+      e.preventDefault();
+      const eventName = eventNameInput.value;
+
+      await fetch('/events', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ name: eventName }),
+      });
+
+      eventNameInput.value = '';
+    };
+  </script>
+</body>
+</html>
