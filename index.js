@@ -1,6 +1,7 @@
 const express = require('express');
 const { Kafka } = require('kafkajs');
 const WebSocket = require('ws');
+const path = require('path');
 
 const app = express();
 const port = 3000;
@@ -56,6 +57,9 @@ const run = async () => {
     });
     res.status(200).send('Event created');
   });
+
+  // Serve the static HTML file
+  app.use(express.static(path.join(__dirname, 'public')));
 
   app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
